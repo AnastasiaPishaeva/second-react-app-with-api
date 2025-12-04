@@ -5,7 +5,7 @@ const StyledHeader = styled("header")`
   background-color: white;
   display: flex;
   justify-content : flex-end;
-  padding: 20px;
+  padding: 30px 20px;
   @media (max-width: 900px) {
     justify-content: center;
   }

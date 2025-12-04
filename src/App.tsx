@@ -13,7 +13,7 @@ function App() {
       <Header/>
         <Routes>
             <Route path="/" element={<MeowFacts />} />
-            <Route path="/memes" element={<MeowFacts />} />
+            <Route path="/memes" element={<Memes />} />
             <Route path="/books" element={<MeowFacts />} />
           </Routes>
     </BrowserRouter>
