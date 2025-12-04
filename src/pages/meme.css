@@ -1,0 +1,19 @@
+@media (max-width: 900px) {
+    main { padding: 0 60px; }
+    footer { padding-left: 60px; }
+    nav ul {
+        gap: 45px;
+        padding: 0 60px;
+        justify-content: center;
+    }
+}
+
+@media (max-width: 805px){
+    h2 { font-size: 32px; }
+}
+
+@media (max-width: 600px) {
+    main { padding: 0 30px; }
+    footer { padding-left: 30px; }
+    nav ul { gap: 35px; padding: 0 30px; }
+}
