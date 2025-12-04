@@ -8,60 +8,27 @@ import { styled } from '@mui/material/styles';
 
 const Title = styled(Typography)`
   margin-top: 0;
+  margin-bottom: 48px;
   font-size: 58px;
   font-weight: 800;
   line-height: normal;
   letter-spacing: 0.2px;
   color: #121212;
-
-  @media (max-width: 900px) {
-  main {
-    padding: 0 60px;
-  }
-  footer {
-    padding-left: 60px;
-  }
-  nav ul {
-    gap: 45px;
-    padding: 0 60px;
-    justify-content: center;
-  }
-}
-
+  font-family: 'Montserrat', sans-serif;
 @media(max-width: 805px){
-  h1 {
     font-size: 50px;
   }
 
-  h2 {
-    font-size: 32px;
-  }
-}
-
 @media (max-width: 600px) {
-  main {
-    padding: 0 30px;
-  }
-  footer {
-    padding-left: 30px;
-  }
-  nav ul {
-    gap: 35px;
-    padding: 0 30px;
-  }
-  h1 {
     font-size: 35px;
   }
-}
 `;
 
 const NumberField = styled(TextField)`
   width: 30%;
-  margin-top: 16px;
 
-  /* корневой контейнер инпута */
   & .MuiOutlinedInput-root {
-    font-family: 'Montserrat';
+    font-family: 'Montserrat', sans-serif;
     font-size: 16px;
 
     & fieldset {
@@ -80,11 +47,12 @@ const NumberField = styled(TextField)`
 
     & input {
       font-size: 16px;
+      padding: 10px 10px;
     }
   }
 
     @media (max-width: 1000px) {
-            width: 45%;
+        width: 45%;
     }
     @media (max-width: 750px) {
         width: 60%;
@@ -104,7 +72,7 @@ const CustomButton = styled(Button)`
   border: none;
   border-radius: 7px;
   cursor: pointer;
-  font-family: inherit;
+  font-family: 'Montserrat', sans-serif;
   width: 25%;
   text-transform: uppercase;
   letter-spacing: 1px;
