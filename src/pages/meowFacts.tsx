@@ -8,60 +8,28 @@ import { styled } from '@mui/material/styles';
 
 const Title = styled(Typography)`
   margin-top: 0;
+  margin-bottom: 48px;
   font-size: 58px;
   font-weight: 800;
   line-height: normal;
+  text-align: center; 
   letter-spacing: 0.2px;
   color: #121212;
-
-  @media (max-width: 900px) {
-  main {
-    padding: 0 60px;
-  }
-  footer {
-    padding-left: 60px;
-  }
-  nav ul {
-    gap: 45px;
-    padding: 0 60px;
-    justify-content: center;
-  }
-}
-
+  font-family: 'Montserrat', sans-serif;
 @media(max-width: 805px){
-  h1 {
     font-size: 50px;
   }
 
-  h2 {
-    font-size: 32px;
-  }
-}
-
 @media (max-width: 600px) {
-  main {
-    padding: 0 30px;
-  }
-  footer {
-    padding-left: 30px;
-  }
-  nav ul {
-    gap: 35px;
-    padding: 0 30px;
-  }
-  h1 {
     font-size: 35px;
   }
-}
 `;
 
 const NumberField = styled(TextField)`
   width: 30%;
-  margin-top: 16px;
 
-  /* корневой контейнер инпута */
   & .MuiOutlinedInput-root {
-    font-family: 'Montserrat';
+    font-family: 'Montserrat', sans-serif;
     font-size: 16px;
 
     & fieldset {
@@ -80,11 +48,12 @@ const NumberField = styled(TextField)`
 
     & input {
       font-size: 16px;
+      padding: 10px 10px;
     }
   }
 
     @media (max-width: 1000px) {
-            width: 45%;
+        width: 45%;
     }
     @media (max-width: 750px) {
         width: 60%;
@@ -94,9 +63,17 @@ const NumberField = styled(TextField)`
     }
 `;
 
+const ErrorMessage = styled(Typography)`
+    font-size: 12px;
+    color: #e47359;
+    font-weight: bold;
+    margin-top: 5px;
+    margin-bottom: 12px;
+`
+
 const CustomButton = styled(Button)`
-  padding: 10px 20px;
-  margin-top: 16px;
+  padding: 3px 20px;
+  margin-top: 4px;
   font-size: 16px;
   font-weight: bold;
   background: linear-gradient(to bottom, #ececdf, #CDC6B3);
@@ -104,7 +81,7 @@ const CustomButton = styled(Button)`
   border: none;
   border-radius: 7px;
   cursor: pointer;
-  font-family: inherit;
+  font-family: 'Montserrat', sans-serif;
   width: 25%;
   text-transform: uppercase;
   letter-spacing: 1px;
@@ -143,28 +120,33 @@ const CustomButton = styled(Button)`
     }
 `;
 
-
-
-
+const StyledCard = styled(Card)`
+    background-color: #F6F6F3;
+    padding: 20px 40px;
+    border-radius: 5px;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+`
 const MeowPage = () => {
     const[data, setData] = useState<string[]>([]);
     const[count, setCount] = useState(""); 
     const [message, setMessage] = useState("");
+    const [flag, setFlag] = useState(false);
 
-    const fetchFacts = async () => {
+    const fetchFacts = async (params: string) => {
         try {
-        const res = await api.get(`/`, {params: count});
+        const res = await api.get(`/`, {params: {count}});
         console.log("данные с сервера:", res.data);
-        setData(res.data);
+        setData(res.data.data);
         } catch (err) {
         console.error("Ошибка загрузки:", err);
         }
     }; 
 
-    function validateAndSet(value: string) {
+    function validate(value: string) {
         if (value.trim() === "") {
             setCount("");
             setMessage("Введите число!");
+            setFlag(false);
             return;
         }
 
@@ -172,17 +154,20 @@ const MeowPage = () => {
 
         if (!Number.isInteger(number) || number <= 0) {
             setMessage("Вводите только целое положительное число!");
+            setFlag(false);
             return;
         }
 
         setMessage("");
         setCount(value);
+        setFlag(true);
         }
     
-    
-    useEffect(() => {
-        fetchFacts();
-    }, [count]);
+    function request() {
+      if (flag === true){
+        fetchFacts(count);
+      }
+    }
 
     return(
         <Grid container direction={'column'} alignItems="center">
@@ -192,10 +177,34 @@ const MeowPage = () => {
                 placeholder="Enter tne number of facts"
                 value={count}
                 onChange={(e) => {
-                    validateAndSet(e.target.value);
+                    validate(e.target.value);
                 }}
             />
-            <CustomButton>Generate</CustomButton>
+            <ErrorMessage>{message}</ErrorMessage>
+            <CustomButton onClick={request}>
+              Generate</CustomButton>
+            <Grid container spacing={3} sx= {{
+              width: "100%",
+              marginTop: "30px",
+              justifyContent: "center"
+            }}>
+              {data.map((fact: string, index: number) => (
+                  <Grid size={{ xs: 10 }} 
+                  key={index}
+                  sx={{       
+                      transition: "0.3s",
+                      "&:hover": {
+                          transform: "scale(1.02)",
+                      }
+                  }}
+                  >
+                  <StyledCard>
+                    <Typography sx = {{fontFamily : 'Montserrat', fontSize : "16px", fontWeight : "500"}}>Fact №{index+1}</Typography>
+                    <Typography sx = {{fontFamily : 'Montserrat', fontSize : "16px", fontWeight : "500"}}>{fact}</Typography>
+                  </StyledCard>
+                  </Grid>
+              ))}
+          </Grid>
         </Grid>
     )
 } 
