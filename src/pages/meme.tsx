@@ -23,6 +23,7 @@ const Title = styled(Typography)`
     font-weight: 800;
     line-height: normal;
     letter-spacing: 0.2px;
+    font-family: 'Montserrat', sans-serif;
     color: #121212;
 
     @media (max-width: 805px) {
@@ -34,14 +35,13 @@ const Title = styled(Typography)`
     }
 `;
 
-const SearchField = styled(TextField)`
-    flex: 1;
+const InputField = styled(TextField)`
     height: 40px;
-
+    width: 100%;
     & .MuiOutlinedInput-root {
         height: 100%;
         background: #F6F6F3;
-        font-family: 'Montserrat';
+        font-family: 'Montserrat', sans-serif;
         font-size: 16px;
         padding: 0;
 
@@ -79,26 +79,20 @@ const SearchField = styled(TextField)`
     & .MuiInputBase-root {
         padding: 0;
     }
-
-    @media (max-width: 1000px) {
-        width: 80%;
-    }
-
-    @media (max-width: 750px) {
-        width: 90%;
-    }
-
-    @media (max-width: 600px) {
-        width: 100%;
-    }
+    
 `;
 
-const SearchRow = styled('div')`
-    display: flex;
-    align-items: center;
-    gap: 20px;
+const SearchRow = styled(Grid)`
+    display: grid;
+    grid-template-columns: 3fr 1fr; 
+    gap: 24px;
     width: 100%;
     margin: 48px 0;
+
+    @media (max-width: 600px) {
+        grid-template-columns: 1fr; 
+        gap: 12px;
+    }
 `;
 
 const CustomButton = styled(Button)({
@@ -106,7 +100,6 @@ const CustomButton = styled(Button)({
     alignItems: 'center',
     justifyContent: 'center',
     padding: '10px 20px',
-    width: '30%',
     height: '40px',
     background: '#656B5F',
     borderRadius: '12px',
@@ -132,30 +125,8 @@ const CustomButton = styled(Button)({
         background: '#B1B4AE',
         cursor: 'not-allowed',
     },
-
-    // Медиа-запросы
-    '@media (max-width: 1000px)': {
-        width: '40%',
-    },
-
-    '@media (max-width: 750px)': {
-        width: '50%',
-    },
-
-    '@media (max-width: 600px)': {
-        width: '75%',
-    },
 });
 
-const MemeGrid = styled("div")`
-    display: grid;
-    grid-template-columns: repeat(auto-fill, 282px);
-    justify-content: space-between;
-    gap: 20px;
-    width: 100%;
-    margin-top: 40px;
-    box-sizing: border-box;
-`;
 interface Meme {
     id: string;
     name: string;
@@ -235,36 +206,42 @@ const Memes = () => {
     return (
         <Grid container direction="column" alignItems="center">
             <Title>Creating memes</Title>
+            <Grid size={{ xs: 10 }}>
+                <SearchRow>
+                        <InputField
+                            placeholder="Search..."
+                            onChange={(e) => onSearch(e.target.value)}
+                        />
+                        <CustomButton
+                            disabled={!selectedId}
+                            onClick={() => setOpen(true)}
+                        >
+                            Create
+                        </CustomButton>
+                </SearchRow>
+            </Grid>
 
-            <SearchRow>
-                <SearchField
-                    placeholder="Search..."
-                    onChange={(e) => onSearch(e.target.value)}
-                />
-                <CustomButton
-                    disabled={!selectedId}
-                    onClick={() => setOpen(true)}
-                >
-                    Create
-                </CustomButton>
-            </SearchRow>
+                <Grid container spacing={3} sx= {{
+                    width: "100%",
+                    marginTop: "30px",
+                    justifyContent: "center"
+                }}>
 
-            <MemeGrid>
-                {filtered.map((meme) => (
-                    <MemeItem
-                        key={meme.id}
-                        title={meme.name}
-                        img={meme.url}
-                        selected={meme.id === selectedId}
-                        onClick={() => setSelectedId(meme.id)}
-                    />
-                ))}
-            </MemeGrid>
+                    {filtered.map((meme) => (
+                        <MemeItem
+                            key={meme.id}
+                            title={meme.name}
+                            img={meme.url}
+                            selected={meme.id === selectedId}
+                            onClick={() => setSelectedId(meme.id)}
+                        />
+                    ))}
+                </Grid>
 
             <Dialog open={open} onClose={() => setOpen(false)} maxWidth="xs" fullWidth>
-                <DialogTitle sx={{textAlign: "center"}}>Enter the text for the meme</DialogTitle>
+                <DialogTitle sx={{fontFamily: "'Montserrat', sans-serif", textAlign: "center"}}>Enter the text for the meme</DialogTitle>
                 <DialogContent sx={{fontFamily: "'Montserrat', sans-serif", display: "flex", flexDirection: "column"}}>
-                    <SearchField
+                    <InputField
                         fullWidth
                         margin="dense"
                         placeholder ="Top text"
@@ -278,7 +255,7 @@ const Memes = () => {
                         }}
 
                     />
-                    <SearchField
+                    <InputField
                         fullWidth
                         margin="dense"
                         placeholder="Bottom text"
@@ -294,18 +271,26 @@ const Memes = () => {
 
                     {createdUrl && (
                         <Box mt={2}>
-                            <Typography>Your meme:</Typography>
+                            <Typography sx={{fontFamily: "'Montserrat', sans-serif"}}>Your meme:</Typography>
                             <img
                                 src={createdUrl}
                                 alt="created meme"
-                                style={{ width: "100%", marginTop: 10, borderRadius: 12 }}
+                                style={{
+                                    maxWidth: "100%",
+                                    height: "auto",
+                                    marginTop: 10,
+                                    borderRadius: 12,
+                                    imageRendering: "crisp-edges"
+                                }}
                             />
                         </Box>
                     )}
                 </DialogContent>
 
                 <DialogActions>
-                    <CustomButton sx={{}} onClick={Close}>Close</CustomButton>
+                    <CustomButton sx={{ background: "#B1B4AE" }} variant="contained" onClick={Close}>
+                        Close
+                    </CustomButton>
                     <CustomButton variant="contained" onClick={createMeme}>
                         Create
                     </CustomButton>
