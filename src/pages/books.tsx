@@ -16,6 +16,7 @@ const Title = styled(Typography)`
     margin-top: 40px;
     font-size: 58px;
     font-weight: 800;
+    font-family: 'Montserrat', sans-serif;
     line-height: normal;
     letter-spacing: 0.2px;
     color: #121212;
