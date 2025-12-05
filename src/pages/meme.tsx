@@ -12,6 +12,7 @@ import {
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import MemeItem from "../components/meme_item";
+import api from "../api/api-meme.ts";
 
 const IMGFLIP_USERNAME = "irako5";
 const IMGFLIP_PASSWORD = "4Xh-CudVw&u%.T4";
@@ -48,15 +49,16 @@ const SearchField = styled(TextField)`
             border: 1px solid #9C968A;
             border-radius: 12px;
         }
+
+        &:hover fieldset {
+            border-color: #817c70;
+        }
+
+        &.Mui-focused fieldset {
+            border-color: #817c70;
+        }
     }
 
-    & .MuiInputBase-input {
-        height: 100%;
-        padding: 0 20px;
-    }
-    
-
-    /* Стили для input */
     & .MuiInputBase-input {
         height: 100%;
         padding: 0 20px;
@@ -73,11 +75,11 @@ const SearchField = styled(TextField)`
             outline: none;
         }
     }
-    
+
     & .MuiInputBase-root {
         padding: 0;
     }
-    
+
     @media (max-width: 1000px) {
         width: 80%;
     }
@@ -106,7 +108,7 @@ const CustomButton = styled(Button)({
     padding: '10px 20px',
     width: '30%',
     height: '40px',
-    background: '#B1B4AE',
+    background: '#656B5F',
     borderRadius: '12px',
     color: 'white',
     boxSizing: 'border-box',
@@ -172,14 +174,30 @@ const Memes = () => {
 
     useEffect(() => {
         const loadMemes = async () => {
-            const response = await fetch("https://api.imgflip.com/get_memes");
-            const data = await response.json();
-            setMemes(data.data.memes);
-            setFiltered(data.data.memes);
+            try {
+                const response = await api.get("/get_memes");
+                const data = response.data;
+                setMemes(data.data.memes);
+                setFiltered(data.data.memes);
+            } catch (error) {
+                console.error("Error loading memes:", error);
+            }
         };
 
         loadMemes();
     }, []);
+
+    function Close(){
+        setOpen(false);
+    }
+
+    useEffect(() => {
+        if(open === false){
+            setTopText("");
+            setBottomText("");
+            setCreatedUrl(null);
+        }
+    }, [open]);
 
     const onSearch = (value: string) => {
         const text = value.toLowerCase();
@@ -196,16 +214,22 @@ const Memes = () => {
         formData.append("text0", topText);
         formData.append("text1", bottomText);
 
-        const response = await fetch("https://api.imgflip.com/caption_image", {
-            method: "POST",
-            body: formData
-        });
+        try {
+            const response = await api.post("/caption_image", formData, {
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded",
+                },
+            });
 
-        const data = await response.json();
-        if (data.success) {
-            setCreatedUrl(data.data.url);
-        } else {
-            alert("Error: " + data.error_message);
+            const data = response.data;
+            if (data.success) {
+                setCreatedUrl(data.data.url);
+            } else {
+                alert("Error: " + data.error_message);
+            }
+        } catch (error) {
+            console.error("Error creating meme:", error);
+            alert("Failed to create meme. Please try again.");
         }
     };
     return (
@@ -238,21 +262,34 @@ const Memes = () => {
             </MemeGrid>
 
             <Dialog open={open} onClose={() => setOpen(false)} maxWidth="xs" fullWidth>
-                <DialogTitle>Enter the text for the meme</DialogTitle>
-                <DialogContent>
-                    <TextField
+                <DialogTitle sx={{textAlign: "center"}}>Enter the text for the meme</DialogTitle>
+                <DialogContent sx={{fontFamily: "'Montserrat', sans-serif", display: "flex", flexDirection: "column"}}>
+                    <SearchField
                         fullWidth
                         margin="dense"
-                        label="Top text"
+                        placeholder ="Top text"
                         value={topText}
                         onChange={(e) => setTopText(e.target.value)}
+                        sx={{
+                            "& .MuiInputBase-input": {
+                                fontSize: "16px",
+                                padding: "10px 10px",
+                            }
+                        }}
+
                     />
-                    <TextField
+                    <SearchField
                         fullWidth
                         margin="dense"
-                        label="Bottom text"
+                        placeholder="Bottom text"
                         value={bottomText}
                         onChange={(e) => setBottomText(e.target.value)}
+                        sx={{
+                            "& .MuiInputBase-input": {
+                                fontSize: "16px",
+                                padding: "10px 10px",
+                            }
+                        }}
                     />
 
                     {createdUrl && (
@@ -268,10 +305,10 @@ const Memes = () => {
                 </DialogContent>
 
                 <DialogActions>
-                    <Button onClick={() => setOpen(false)}>Close</Button>
-                    <Button variant="contained" onClick={createMeme}>
+                    <CustomButton sx={{}} onClick={Close}>Close</CustomButton>
+                    <CustomButton variant="contained" onClick={createMeme}>
                         Create
-                    </Button>
+                    </CustomButton>
                 </DialogActions>
             </Dialog>
         </Grid>
