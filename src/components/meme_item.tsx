@@ -43,6 +43,7 @@ const MemeTitle = styled("div")`
     font-weight: 700;
     text-align: left;
     color: #121212;
+    font-family: 'Montserrat', sans-serif;
     margin-bottom: 10px;
 `;
 interface MemeItemProps {
