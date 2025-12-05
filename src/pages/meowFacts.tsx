@@ -131,7 +131,7 @@ const MeowPage = () => {
     const [message, setMessage] = useState("");
     const [flag, setFlag] = useState(false);
 
-    const fetchFacts = async (params: string) => {
+    const fetchFacts = async (count: string) => {
         try {
         const res = await api.get(`/`, {params: {count}});
         console.log("данные с сервера:", res.data);
